@@ -44,7 +44,7 @@ From the command line, just run `php download` with the SoundCloud URL of a trac
 php download https://soundcloud.com/foo/bar
 ```
 
-### Retreiving content
+### Retrieving content
 
 Your XML feed will be stored at `public/feed.xml` and updated every time you add new content. Downloaded MP3s are stored in `public/downloads`.
 
