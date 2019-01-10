@@ -52,7 +52,7 @@ echo "\nSaving to database..."; flush();
 $id = $download['id'];
 $title = $download['title'];
 $description = $download['description'];
-$date = $download['upload_date']->format('c');
+$date = $download['upload_date']->format('D, d M Y H:i:s O');
 $path = 'downloads/' . $download['_filename'];
 
 // Save the MP3 metadata to the database.

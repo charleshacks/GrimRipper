@@ -26,10 +26,11 @@ Install Composer dependencies
 composer install
 ```
 
-Copy `.env.example` to `.env` and add the hostname of your server.
+Copy `.env.example` to `.env` and add the hostname of your server and a feed title..
 
 ```
-PUBLIC_URL=https://example.com/
+APP_URL="https://example.com/"
+APP_TITLE="My RSS Feed"
 ```
 
 Configure your webserver to serve the `public/` directory, and you're off to the races!

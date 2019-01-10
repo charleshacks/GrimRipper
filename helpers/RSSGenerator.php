@@ -12,19 +12,26 @@ class RSSGenerator
      */
     public function output($records)
     {
-        $xml = new \SimpleXMLElement('<xml/>');
+        $rss = new \SimpleXMLElement('<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"></rss>');
+
+        $channel = $rss->addChild('channel');
+
+        $channel->addChild('title', getenv('APP_TITLE'));
+        $channel->addChild('description', getenv('APP_TITLE'));
+        $channel->addChild('link', getenv('APP_URL'));
+        $channel->addChild('lastBuildDate', date('D, d M Y H:i:s O'));
 
         foreach ($records as $record) {
 
-            $track = $xml->addChild('track');
+            $item = $channel->addChild('item');
 
-            $track->addChild('title', $record['title']);
-            $track->addChild('description', $record['description']);
-            $track->addChild('date', $record['date']);
-            $track->addChild('link', getenv('PUBLIC_URL') . $record['path']);
+            $item->addChild('title', $record['title']);
+            $item->addChild('description', $record['description']);
+            $item->addChild('pubDate', $record['date']);
+            $item->addChild('link', getenv('APP_URL') . $record['path']);
 
         }
 
-        file_put_contents(dirname(dirname(__FILE__)) . '/public/feed.xml', $xml->asXML());
+        file_put_contents(dirname(dirname(__FILE__)) . '/public/feed.xml', $rss->asXML());
     }
 }
