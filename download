@@ -1,0 +1,65 @@
+#!/usr/bin/env php
+
+<?php
+
+require __DIR__ . '/vendor/autoload.php';
+
+use Helpers\Archives;
+use Helpers\StatusBar;
+use YoutubeDl\YoutubeDl;
+use Helpers\RSSGenerator;
+use Symfony\Component\Dotenv\Dotenv;
+
+// Load environment variables
+$dotenv = new Dotenv();
+$dotenv->load(__DIR__.'/.env');
+
+// Instantiate helpers.
+$Archives = new Archives();
+$RSSGenerator = new RSSGenerator();
+$StatusBar = new StatusBar(100);
+
+// Fetch URL from command line.
+$soundcloudURL = $argv[1];
+
+// Instantiate a new YoutubeDL client.
+$client = new YoutubeDl([
+    'extract-audio' => true,
+    'audio-format' => 'mp3',
+    'audio-quality' => 0,
+    'output' => '%(id)s.%(ext)s',
+]);
+
+// Set the output directory to ~/audio/.
+$client->setDownloadPath(__DIR__ . '/public/downloads');
+
+// Update the status bar on each progress update from YoutubeDL.
+$client->onProgress(function ($progress) use ($StatusBar) {
+
+    // Quick hack to remove percentage symbol and decimal from progress reported by YoutubeDL.
+    $percentage = substr($progress['percentage'], 0, -3);
+
+    $StatusBar->setProgress($percentage);
+
+});
+
+// Download the MP3.
+$download = $client->download($soundcloudURL);
+
+echo "\nSaving to database..."; flush();
+
+// Fetch and format MP3 metadata.
+$id = $download['id'];
+$title = $download['title'];
+$description = $download['description'];
+$date = $download['upload_date']->format('c');
+$path = 'downloads/' . $download['_filename'];
+
+// Save the MP3 metadata to the database.
+$Archives->add($id, $title, $description, $date, $path);
+
+echo "\nGenerating new RSS feed...";
+
+$RSSGenerator->output($Archives->getAll());
+
+echo "\nComplete!\n";

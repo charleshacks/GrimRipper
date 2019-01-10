@@ -1,0 +1,10 @@
+{
+    "require": {
+        "norkunas/youtube-dl-php": "^1.1",
+        "filebase/filebase": "^1.0",
+        "symfony/dotenv": "^4.2"
+    },
+    "autoload": {
+        "psr-4": {"Helpers\\": "helpers/"}
+    }
+}
